@@ -1,0 +1,54 @@
+{
+  "ruturang": {
+    "width": 550,
+    "height": 300,
+    "widths": [
+      480,
+      550
+    ]
+  },
+  "renaissance": {
+    "width": 550,
+    "height": 300,
+    "widths": [
+      480,
+      550
+    ]
+  },
+  "veeya-vantage": {
+    "width": 1024,
+    "height": 732,
+    "widths": [
+      480,
+      960,
+      1024
+    ]
+  },
+  "bhatevara-business-bay": {
+    "width": 1024,
+    "height": 732,
+    "widths": [
+      480,
+      960,
+      1024
+    ]
+  },
+  "signature-park": {
+    "width": 1173,
+    "height": 900,
+    "widths": [
+      480,
+      960,
+      1173
+    ]
+  },
+  "suvidha": {
+    "width": 1100,
+    "height": 604,
+    "widths": [
+      480,
+      960,
+      1100
+    ]
+  }
+}

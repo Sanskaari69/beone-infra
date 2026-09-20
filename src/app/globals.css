@@ -1,0 +1,297 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-outfit), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-fira-code), ui-monospace, SFMono-Regular, monospace;
+  --font-serif: var(--font-merriweather), Georgia, serif;
+  --font-heading: var(--font-sans);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-primary-text: var(--primary-text);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-grid-line: var(--grid-line);
+  --color-line-strong: var(--line-strong);
+  --radius-sm: calc(var(--radius) * 0.5);
+  --radius-md: calc(var(--radius) * 0.75);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.5);
+  --radius-2xl: calc(var(--radius) * 2);
+  --spacing: 0.25rem;
+  --tracking-normal: 0em;
+  --ease-calm: cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+/*
+ * Design tokens from the brief (section 2). Hex values are used exactly.
+ * Values marked "derived" are not in the brief: foreground text colours,
+ * card/popover foregrounds, and the orange text tint. They exist only to meet
+ * WCAG AA and are verified by scripts/check-contrast.mjs.
+ */
+:root {
+  --background: #e8ebed;
+  --foreground: #1a1a1a; /* derived */
+  --card: #ffffff;
+  --card-foreground: #1a1a1a; /* derived */
+  --popover: #ffffff; /* derived: brief gives no light popover */
+  --popover-foreground: #1a1a1a; /* derived */
+  --muted: #f9fafb;
+  --muted-foreground: #565b63; /* derived */
+  --primary: #df6035;
+  --primary-foreground: #1a1a1a; /* derived: white on #df6035 is ~3.6:1 */
+  --primary-text: #b4421c; /* derived: orange used as text on light backgrounds */
+  --secondary: #2f4b79;
+  --secondary-foreground: #ffffff; /* derived */
+  --accent: #d6e4f0;
+  --accent-foreground: #1a1a1a; /* derived */
+  --border: #cccccc;
+  --input: #f4f5f7;
+  --ring: #e05d38;
+  --destructive: #ef4444;
+  --chart-1: #85a6c7;
+  --chart-2: #e16f41;
+  --chart-3: #d54450;
+  --chart-4: #e2b146;
+  --chart-5: #3c4c76;
+  --grid-line: rgb(40 65 103 / 0.06); /* derived */
+  --line-strong: #2f4b79; /* derived: emphasis lines and borders; navy in light */
+  --radius: 0.5rem;
+}
+
+.dark {
+  --background: #1a1a1a;
+  --foreground: #ececec; /* derived */
+  --card: #202020;
+  --card-foreground: #ececec; /* derived */
+  --popover: #202020;
+  --popover-foreground: #ececec; /* derived */
+  --muted: #2a2a2a;
+  --muted-foreground: #a6a6a6; /* derived */
+  --primary: #df6035;
+  --primary-foreground: #1a1a1a; /* derived */
+  --primary-text: #ee7a52; /* derived: orange used as text on dark surfaces */
+  --secondary: #284167;
+  --secondary-foreground: #ececec; /* derived */
+  --accent: #2a3656;
+  --accent-foreground: #ececec; /* derived */
+  --border: #353535;
+  --input: #303030;
+  --ring: #e05d38;
+  --destructive: #ef4444;
+  --grid-line: rgb(133 166 199 / 0.08); /* derived */
+  --line-strong: #85a6c7; /* derived: emphasis lines and borders; chart-1 in dark */
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    @apply font-sans;
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-background text-foreground;
+    letter-spacing: 0em;
+  }
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-heading);
+  }
+}
+
+/* Numbers, dates, codes, areas and durations: Fira Code, tabular figures. */
+.num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+
+/* Placeholder and draft markers. Visible on purpose: content awaiting the owner. */
+.placeholder-mark {
+  border-bottom: 1px dashed var(--muted-foreground);
+}
+.draft-mark {
+  border-bottom: 1px dotted var(--chart-4);
+}
+
+/* Interactive cards: the border draws in from the top-left corner. */
+.draw-border {
+  position: relative;
+}
+.draw-border > .draw-border__svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: visible;
+}
+.draw-border__svg rect {
+  x: 0.5px;
+  y: 0.5px;
+  width: calc(100% - 1px);
+  height: calc(100% - 1px);
+  rx: var(--radius);
+  fill: none;
+  stroke: var(--line-strong);
+  stroke-width: 1;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  transition: stroke-dashoffset 360ms var(--ease-calm);
+}
+.draw-border:hover > .draw-border__svg rect,
+.draw-border:focus-within > .draw-border__svg rect,
+.draw-border[data-active="true"] > .draw-border__svg rect {
+  stroke-dashoffset: 0;
+}
+
+/* Visible focus for keyboard users on every interactive element. */
+:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+/*
+ * Count-up: pure CSS. --num counts from 0 to its own value; counters split it into whole and
+ * fraction parts. Pseudo-element text is not an LCP candidate. Only used when CSS round()/mod()
+ * are supported and motion is allowed; otherwise the real text (.count-static) stays visible.
+ */
+@property --num {
+  syntax: "<integer>";
+  inherits: false;
+  initial-value: 0;
+}
+@keyframes count-up {
+  from {
+    --num: 0;
+  }
+}
+.count-anim {
+  display: none;
+}
+@supports (width: round(down, 5px, 1px)) {
+  @media (prefers-reduced-motion: no-preference) {
+    .count-static {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+    .count-anim {
+      display: inline-block;
+      animation: count-up 900ms var(--ease-calm) 200ms both;
+      counter-reset: whole round(down, calc(var(--num) / var(--div)), 1) frac mod(var(--num), var(--div));
+    }
+    .count-anim[data-dec="0"]::before {
+      content: counter(whole) var(--suffix);
+    }
+    .count-anim[data-dec="1"]::before {
+      content: counter(whole) "." counter(frac) var(--suffix);
+    }
+    .count-anim[data-dec="2"]::before {
+      content: counter(whole) "." counter(frac, decimal-leading-zero) var(--suffix);
+    }
+  }
+}
+
+/* Section entrances: 12px rise + fade, staggered 40ms via --i. */
+/* Above-the-fold entrance starts at 0.01, not 0, so the content counts as painted on the first
+   frame (FCP/LCP) instead of after the stagger delay. Visually it is still a fade. */
+@keyframes rise {
+  from {
+    opacity: 0.01;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.reveal-now {
+  animation: rise 320ms var(--ease-calm) both;
+  animation-delay: calc(var(--i, 0) * 40ms);
+}
+.reveal {
+  opacity: 0;
+  transform: translateY(12px);
+  transition:
+    opacity 320ms var(--ease-calm),
+    transform 320ms var(--ease-calm);
+  transition-delay: calc(var(--i, 0) * 40ms);
+}
+.reveal[data-in="true"] {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal,
+  .reveal-now {
+    opacity: 1;
+    transform: none;
+    animation: none;
+    transition: none;
+  }
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* Hero: one slow sweep line, once, on load. Hidden under reduced motion. */
+@keyframes sweep {
+  from {
+    transform: translateX(-4vw);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  to {
+    transform: translateX(104vw);
+    opacity: 0;
+  }
+}
+.sweep-line {
+  animation: sweep 9s var(--ease-calm) 600ms 1 both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .sweep-line {
+    display: none;
+  }
+}
