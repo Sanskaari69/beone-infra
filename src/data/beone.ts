@@ -11,7 +11,6 @@ import imageSourceMap from "./image-sources.json";
 import imageManifest from "./images.generated.json";
 import type {
   Contact,
-  Datum,
   Division,
   Draft,
   Figure,
@@ -21,6 +20,8 @@ import type {
   SpineStage,
   Verified,
   DateString,
+  DivisionId,
+  Ownership,
 } from "./schema";
 
 /* ---------- helpers ---------- */
@@ -44,7 +45,10 @@ const ph = (note?: string): Placeholder => ({
 
 const OLD_SITE = "beoneinfra.com (fetched 20.09.2026)";
 const OWNER = "Owner confirmation 20.09.2026";
-const EARLIER_BUILD = "Earlier site build, from beoneinfra.com content";
+const PAGE = (file: string) => `beoneinfra.com/${file} (fetched 20.09.2026)`;
+const BROCHURE = "signature_corner.pdf on beoneinfra.com (fetched 20.09.2026)";
+const MODEL =
+  "Owner statement 20.09.2026: Be-One builds each project itself and sells to buyers; several buyers per site";
 const RERA_VERIFY_URL = "https://maharerait.mahaonline.gov.in/searchlist/search";
 
 /* ---------- meta ---------- */
@@ -115,8 +119,24 @@ export const oldSiteServices = [
 
 /* ---------- projects ---------- */
 
+const fact = (label: string, value: string, source: string) => ({ label, value, source });
+
+/** Published on the old site for Sunanda and Bhansali Campus (identical lists on both pages). */
+const specFacts = (file: string) => [
+  fact("Structure", "Earthquake-resistant RCC", PAGE(file)),
+  fact("Masonry", "6-inch brick, internal and external", PAGE(file)),
+  fact("Lifts", "Schindler or equivalent", PAGE(file)),
+  fact("Fire fighting", "PMC-compliant equipment", PAGE(file)),
+  fact("Power backup", "Lifts, pumps and common areas", PAGE(file)),
+  fact("Security", "24-hour; CCTV in common areas, 24/7 recording", PAGE(file)),
+  fact("Water and energy", "Rainwater harvesting; solar system", PAGE(file)),
+];
+
+const AMENITIES_8 =
+  "8: party lawn, club house, sit-outs with planters, indoor games room, gymnasium, swimming pool, meditation area, amphitheatre";
+
 const noDetail = {
-  client: ph(),
+  buyers: ver("Individual buyers, several per site", MODEL),
   builtUpSqft: ph(),
   contractBand: ph(),
   duration: ph(),
@@ -134,7 +154,6 @@ const baseProjects: Project[] = [
     scope: ver("2 & 3 BHK Residential", OLD_SITE),
     types: ver(["residential"], OLD_SITE),
     ...noDetail,
-    client: ver("Be-One Infra (sole owner)", OWNER),
     divisions: ver(["real-estate"], OWNER),
     rera: {
       number: "P52100050045",
@@ -142,6 +161,10 @@ const baseProjects: Project[] = [
       validUntil: ph("Validity date to be supplied."),
       verifyUrl: RERA_VERIFY_URL,
     },
+    facts: [
+      fact("Owner", "Be-One Infra, sole owner", OWNER),
+      fact("Amenities", AMENITIES_8, PAGE("18-jewels.php")),
+    ],
   },
   {
     id: "sunanda",
@@ -152,7 +175,11 @@ const baseProjects: Project[] = [
     types: ver(["residential"], OLD_SITE),
     ...noDetail,
     divisions: ver(["real-estate"], `${OLD_SITE}: launched by Be-One Infra`),
-    facts: [{ label: "RERA", value: "Registered; number not yet published" }],
+    facts: [
+      fact("RERA", "Registered; number not yet published", PAGE("bhatewara-residence.php")),
+      ...specFacts("bhatewara-residence.php"),
+      fact("Amenities", AMENITIES_8, PAGE("bhatewara-residence.php")),
+    ],
   },
   {
     id: "bhansali-campus",
@@ -162,7 +189,6 @@ const baseProjects: Project[] = [
     scope: ver("2 BHK Residential", OLD_SITE),
     types: ver(["residential"], OLD_SITE),
     ...noDetail,
-    client: ver("Be-One Infra (sole owner)", OWNER),
     divisions: ver(["real-estate"], OWNER),
     rera: {
       number: "P52100029257",
@@ -170,7 +196,13 @@ const baseProjects: Project[] = [
       validUntil: ph("Validity date to be supplied."),
       verifyUrl: RERA_VERIFY_URL,
     },
-    facts: [{ label: "Site area", value: "1 acre" }],
+    facts: [
+      fact("Owner", "Be-One Infra, sole owner", OWNER),
+      fact("Site area", "1 acre", PAGE("bhansali-campus.php")),
+      fact("Occupancy certificate", "Not yet granted", PAGE("bhansali-campus.php")),
+      ...specFacts("bhansali-campus.php"),
+      fact("Amenities", AMENITIES_8, PAGE("bhansali-campus.php")),
+    ],
   },
 
   /* ----- upcoming ----- */
@@ -199,9 +231,19 @@ const baseProjects: Project[] = [
       validUntil: ph("Validity date to be supplied."),
       verifyUrl: RERA_VERIFY_URL,
     },
+    // The brochure text says "30 apartments" but its layout lists flat numbers 101-606 (36).
+    // No residence count is shown until the owner confirms.
     facts: [
-      { label: "Residences", value: "30" },
-      { label: "Ground-floor shops", value: "6" },
+      fact("Site", "Survey No. 113, Plot No. 12, Old Alandi Road, Vishrantwadi, Pune", BROCHURE),
+      fact("Ground-floor shops", "6", BROCHURE),
+      fact("Shop carpet area, ground floor", "237 – 1,016 sq.ft", BROCHURE),
+      fact("Flat carpet area", "603 – 918 sq.ft (2 BHK and 2.5 BHK)", BROCHURE),
+      fact("Structure", "Earthquake-resistant (Zone 3) RCC frame", BROCHURE),
+      fact("Walls", "AAC block and brick masonry", BROCHURE),
+      fact("Flooring", "600 × 600 mm vitrified tile", BROCHURE),
+      fact("Plumbing", "CPVC internal, UPVC external", BROCHURE),
+      fact("Lift", "Branded lift, as per fire norms", BROCHURE),
+      fact("Distances", "Pune Airport 4 km, Viman Nagar 4 km, Pune Station 8 km, Kharadi 10 km", BROCHURE),
     ],
   },
   {
@@ -216,89 +258,68 @@ const baseProjects: Project[] = [
   },
 
   /* ----- completed ----- */
-  {
-    id: "ruturang",
-    name: "Ruturang",
-    location: "Karve Road, Pune",
-    status: "completed",
-    scope: ph("Project scope to be supplied."),
-    types: ph("Project type to be supplied."),
-    ...noDetail,
-    divisions: ph(),
-  },
-  {
-    id: "west-winds",
-    name: "West Winds",
-    location: "Baner, Pune",
-    status: "completed",
-    scope: ph("Project scope to be supplied."),
-    types: ph("Project type to be supplied."),
-    ...noDetail,
-    divisions: ph(),
-  },
-  {
-    id: "renaissance",
-    name: "Renaissance",
-    location: "Prabhat Road, Pune",
-    status: "completed",
-    scope: ph("Project scope to be supplied."),
-    types: ph("Project type to be supplied."),
-    ...noDetail,
-    divisions: ph(),
-  },
-  {
-    id: "veeya-vantage",
-    name: "Veeya Vantage",
-    location: "Law College Road, Pune",
-    status: "completed",
-    scope: ph("Project scope to be supplied."),
-    types: ph("Project type to be supplied."),
-    ...noDetail,
-    divisions: ph(),
-  },
-  {
-    id: "whispering-winds",
-    name: "Whispering Winds",
-    location: "Aundh Annexe, Pune",
-    status: "completed",
-    scope: ph("Project scope to be supplied."),
-    types: ph("Project type to be supplied."),
-    ...noDetail,
-    divisions: ph(),
-  },
+  ...(
+    [
+      ["ruturang", "Ruturang", "Karve Road, Pune"],
+      ["west-winds", "West Winds", "Baner, Pune"],
+      ["renaissance", "Renaissance", "Prabhat Road, Pune"],
+      ["veeya-vantage", "Veeya Vantage", "Law College Road, Pune"],
+      ["whispering-winds", "Whispering Winds", "Aundh Annexe, Pune"],
+    ] as const
+  ).map(
+    ([id, name, location]): Project => ({
+      id,
+      name,
+      location,
+      status: "completed",
+      scope: ph("Project scope to be supplied."),
+      types: ph("Project type to be supplied."),
+      ...noDetail,
+      divisions: ph(),
+    }),
+  ),
   {
     id: "bhatevara-business-bay",
     name: "Bhatevara Business Bay",
     location: "Bibwewadi, Pune",
     status: "completed",
-    scope: ver("Commercial, redevelopment of Shriyog", EARLIER_BUILD),
-    types: ver(["commercial"], EARLIER_BUILD),
+    scope: ver("Commercial, redevelopment of Shriyog", `${PAGE("redevelopment.php")}`),
+    types: ver(["commercial"], PAGE("redevelopment.php")),
     ...noDetail,
     divisions: ph(),
   },
 ];
 
 /**
- * Old-site image files (https://www.beoneinfra.com/assets/img/project/) live in image-sources.json;
- * scripts/fetch-images.mjs turns them into WebP variants and images.generated.json.
- * `whispering-winds.jpg` and `whispering.jpg` are ambiguous: the brief pairs them one way with
- * West Winds / Whispering Winds, the earlier build the other way. Left unassigned until the owner
- * confirms. The three ongoing projects have no listed image.
- * The images are architectural renderings, not photographs of the finished buildings.
+ * Images come from the old site (image-sources.json), paired with project names by the old
+ * homepage's own markup and links. scripts/fetch-images.mjs turns them into WebP variants and
+ * images.generated.json. They are architectural renderings, not photographs of finished buildings.
  */
 const imageAlt: Record<string, string> = {
+  "18-jewels":
+    "Architectural rendering of 18 Jewels, Erandwane, Pune: a multi-storey building with brick-toned panels, vertical lattice screens and parking at ground level.",
+  sunanda:
+    "Architectural rendering of Sunanda, Bibwewadi, Pune: a building faced in exposed brick with timber louvres, open balconies and parking at ground level.",
+  "bhansali-campus":
+    "Architectural rendering of Bhansali Campus, Sinhagad Road, Pune: two multi-storey buildings with shopfronts at street level, palm trees and a landscaped entrance.",
+  "signature-park":
+    "Architectural rendering of Signature Park, Marunji, Pune: two tall towers rising from a three-storey podium, shown at dusk.",
+  "signature-corner":
+    "Architectural rendering of Signature Corner, Vishrantwadi, Pune: a tall building with grey stone-clad and white bays, balconies with planters and an open ground floor.",
+  suvidha:
+    "Architectural rendering of Suvidha, Sahakar Nagar, Pune: a seven-storey building with balconies and a vertical timber-clad panel, shown at dusk.",
   ruturang:
     "Architectural rendering of Ruturang, Karve Road, Pune: a multi-storey building with a cream and brown facade behind a low boundary wall.",
+  "west-winds":
+    "Architectural rendering of West Winds, Baner, Pune: a multi-storey building in cream and beige with a louvred central stair core and palm trees along the boundary.",
   renaissance:
     "Architectural rendering of Renaissance, Prabhat Road, Pune: a tall building with a beige upper section and maroon vertical fins.",
   "veeya-vantage":
     "Architectural rendering of Veeya Vantage, Law College Road, Pune: a five-storey building with shopfronts at street level and a rooftop terrace.",
+  "whispering-winds":
+    "Architectural rendering of Whispering Winds, Aundh Annexe, Pune: a multi-storey cream building with a louvred stair core, raised on pillars, with palms and a boundary wall.",
   "bhatevara-business-bay":
     "Architectural rendering of Bhatevara Business Bay, Bibwewadi, Pune: a five-storey building with timber-toned vertical louvres, a bank at street level and a planted roof.",
-  "signature-park":
-    "Architectural rendering of Signature Park, Marunji, Pune: two tall towers rising from a three-storey podium, shown at dusk.",
-  suvidha:
-    "Architectural rendering of Suvidha, Sahakar Nagar, Pune: a seven-storey building with balconies and a vertical timber-clad panel, shown at dusk.",
 };
 
 export const projects: Project[] = baseProjects.map((p) => {
@@ -306,8 +327,6 @@ export const projects: Project[] = baseProjects.map((p) => {
   if (!(p.id in imageSourceMap) || !dims || !imageAlt[p.id]) return p;
   return { ...p, image: { src: `/projects/${p.id}`, alt: imageAlt[p.id], width: dims.width, height: dims.height } };
 });
-
-export const unassignedImages = ["whispering-winds.jpg", "whispering.jpg"] as const;
 
 /* ---------- hero figures ---------- */
 
@@ -348,16 +367,19 @@ export const figures: Figure[] = [
 const stageWhat = (v: string): Draft<string> => draft(v, "Neutral stage definition. Awaiting owner approval.");
 
 /**
- * Ownership and division per stage are unconfirmed, so every stage renders as
- * neutral until the owner supplies the mapping. Orange is not used until it is true.
+ * Owner statement 20.09.2026: "we make it fully by ourselves and then people come and buy it".
+ * Read as: every stage is in-house, under real estate development. Kept as DRAFT until the owner
+ * confirms stage by stage, so the page flags it instead of presenting it as verified.
  */
+const inHouse = draft<Ownership>("in-house", "From the owner's statement that Be-One builds each project itself. Confirm per stage.");
+const realEstate = draft<DivisionId>("real-estate", "Assumed from the owner's statement. Confirm per stage.");
 export const spineStages: SpineStage[] = [
   {
     id: "land",
     label: "Land",
     what: stageWhat("Site identification and acquisition."),
-    ownership: ph(),
-    division: ph(),
+    ownership: inHouse,
+    division: realEstate,
     proof: draft(
       { projectId: "signature-park", fact: "Signature Park: S.No.57, Marunji, Hijewadi Annexe, Mulshi, Pune" },
       "Candidate proof from verified facts. Awaiting owner approval.",
@@ -367,64 +389,64 @@ export const spineStages: SpineStage[] = [
     id: "feasibility",
     label: "Feasibility",
     what: stageWhat("Site, cost and yield assessment."),
-    ownership: ph(),
-    division: ph(),
+    ownership: inHouse,
+    division: realEstate,
     proof: ph("Proof from a real project to be supplied."),
   },
   {
     id: "design",
     label: "Design",
     what: stageWhat("Architecture, structure and services design."),
-    ownership: ph(),
-    division: ph(),
+    ownership: inHouse,
+    division: realEstate,
     proof: ph("Proof from a real project to be supplied."),
   },
   {
     id: "approvals",
     label: "Approvals",
     what: stageWhat("Statutory permissions and registrations."),
-    ownership: ph(),
-    division: ph(),
+    ownership: inHouse,
+    division: realEstate,
     proof: ver({ fact: "3 projects registered with MahaRERA: 18 Jewels, Bhansali Campus, Signature Corner" }, OWNER),
   },
   {
     id: "procurement",
     label: "Procurement",
     what: stageWhat("Contracts, materials and vendor orders."),
-    ownership: ph(),
-    division: ph(),
+    ownership: inHouse,
+    division: realEstate,
     proof: ph("Proof from a real project to be supplied."),
   },
   {
     id: "build",
     label: "Build",
     what: stageWhat("Construction of the structure."),
-    ownership: ph(),
-    division: ph(),
+    ownership: inHouse,
+    division: realEstate,
     proof: ver({ fact: "3.75 lakh sq.ft constructed, incl. ongoing" }, OLD_SITE),
   },
   {
     id: "fit-out",
     label: "Fit-out",
     what: stageWhat("Interiors and services completion."),
-    ownership: ph(),
-    division: ph(),
+    ownership: inHouse,
+    division: realEstate,
     proof: ph("Proof from a real project to be supplied."),
   },
   {
     id: "handover",
     label: "Handover",
     what: stageWhat("Delivery to the client or buyers."),
-    ownership: ph(),
-    division: ph(),
+    ownership: inHouse,
+    division: realEstate,
     proof: ver({ fact: "6 projects handed over" }, OWNER),
   },
   {
     id: "aftercare",
     label: "Aftercare",
     what: stageWhat("Post-handover service and defect correction."),
-    ownership: ph(),
-    division: ph(),
+    ownership: inHouse,
+    division: realEstate,
     proof: ph("Proof from a real project to be supplied."),
   },
 ];
@@ -484,14 +506,7 @@ export const proofItems: ProofItem[] = [
   },
 ];
 
-export const clientLogos: Datum<string>[] = [ph("Client logos to be supplied.")];
-
-export const pullQuote = {
-  quote: ph("Client quote to be supplied."),
-  name: ph(),
-  title: ph(),
-  company: ph(),
-} as const;
+/* No client logos or client quotes: client details are not published. */
 
 /* ---------- materials division ---------- */
 

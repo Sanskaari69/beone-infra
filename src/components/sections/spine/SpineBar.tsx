@@ -62,7 +62,7 @@ export function SpineBar({ active, onSelect, className }: SpineBarProps) {
             />
             <span
               className={cn(
-                "num mt-3 block text-[0.65rem] uppercase tracking-[0.08em] transition-colors duration-300 lg:text-xs",
+                "num mt-3 block text-[0.6rem] uppercase tracking-normal transition-colors duration-300 lg:text-xs lg:tracking-[0.08em]",
                 isActive ? "text-primary-text" : "text-muted-foreground",
               )}
             >

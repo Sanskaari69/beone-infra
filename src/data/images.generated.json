@@ -1,5 +1,63 @@
 {
+  "18-jewels": {
+    "width": 655,
+    "height": 600,
+    "widths": [
+      480,
+      655
+    ]
+  },
+  "sunanda": {
+    "width": 690,
+    "height": 600,
+    "widths": [
+      480,
+      690
+    ]
+  },
+  "bhansali-campus": {
+    "width": 550,
+    "height": 300,
+    "widths": [
+      480,
+      550
+    ]
+  },
+  "signature-park": {
+    "width": 1173,
+    "height": 900,
+    "widths": [
+      480,
+      960,
+      1173
+    ]
+  },
+  "signature-corner": {
+    "width": 752,
+    "height": 600,
+    "widths": [
+      480,
+      752
+    ]
+  },
+  "suvidha": {
+    "width": 1100,
+    "height": 604,
+    "widths": [
+      480,
+      960,
+      1100
+    ]
+  },
   "ruturang": {
+    "width": 550,
+    "height": 300,
+    "widths": [
+      480,
+      550
+    ]
+  },
+  "west-winds": {
     "width": 550,
     "height": 300,
     "widths": [
@@ -24,7 +82,7 @@
       1024
     ]
   },
-  "bhatevara-business-bay": {
+  "whispering-winds": {
     "width": 1024,
     "height": 732,
     "widths": [
@@ -33,22 +91,13 @@
       1024
     ]
   },
-  "signature-park": {
-    "width": 1173,
-    "height": 900,
+  "bhatevara-business-bay": {
+    "width": 1024,
+    "height": 732,
     "widths": [
       480,
       960,
-      1173
-    ]
-  },
-  "suvidha": {
-    "width": 1100,
-    "height": 604,
-    "widths": [
-      480,
-      960,
-      1100
+      1024
     ]
   }
 }

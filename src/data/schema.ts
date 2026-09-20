@@ -87,7 +87,8 @@ export interface Project {
   scope: Datum<string>;
   types: Datum<ProjectType[]>;
   image?: ProjectImage;
-  client: Datum<string>;
+  /** Who buys. Be-One builds each project itself and sells to individual buyers; no client is named. */
+  buyers: Datum<string>;
   builtUpSqft: Datum<number>;
   contractBand: Datum<string>;
   duration: Datum<string>;
@@ -97,7 +98,7 @@ export interface Project {
   constraintSolved: Datum<string>;
   rera?: Rera;
   /** Extra verified facts for this project. */
-  facts?: { label: string; value: string }[];
+  facts?: { label: string; value: string; source: string }[];
 }
 
 export interface SpineStage {

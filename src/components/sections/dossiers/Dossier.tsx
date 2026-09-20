@@ -10,9 +10,9 @@ const statusLabel: Record<Project["status"], string> = {
   upcoming: "Upcoming",
 };
 
-function Row({ label, children }: { label: string; children: React.ReactNode }) {
+function Row({ label, children, title }: { label: string; children: React.ReactNode; title?: string }) {
   return (
-    <div className="flex items-baseline justify-between gap-4 border-b border-border py-2">
+    <div className="flex items-baseline justify-between gap-4 border-b border-border py-2" title={title}>
       <dt className="text-muted-foreground">{label}</dt>
       <dd className="text-right">{children}</dd>
     </div>
@@ -33,10 +33,10 @@ export function Dossier({ project: p }: { project: Project }) {
           width={p.image.width}
           height={p.image.height}
           sizes="(min-width: 1152px) 1100px, 100vw"
-          className="aspect-[16/8] w-full rounded-t-xl object-cover sm:aspect-[16/7] lg:aspect-[16/6]"
+          className="aspect-[16/8] w-full rounded-t-xl object-cover sm:aspect-[16/7] lg:aspect-[16/7]"
         />
       ) : (
-        <div className="flex aspect-[16/8] w-full items-center justify-center rounded-t-xl border-b border-border bg-muted sm:aspect-[16/7] lg:aspect-[16/6]">
+        <div className="flex aspect-[16/8] w-full items-center justify-center rounded-t-xl border-b border-border bg-muted sm:aspect-[16/7] lg:aspect-[16/7]">
           <span className="placeholder-mark text-sm text-muted-foreground italic">Image: placeholder, to be supplied</span>
         </div>
       )}
@@ -51,8 +51,8 @@ export function Dossier({ project: p }: { project: Project }) {
 
         <div className="num mt-6 grid gap-x-10 text-sm md:grid-cols-2">
           <dl>
-            <Row label="Client">
-              <Val datum={p.client} />
+            <Row label="Buyers">
+              <Val datum={p.buyers} />
             </Row>
             <Row label="Scope">
               <Val datum={p.scope} />
@@ -97,7 +97,7 @@ export function Dossier({ project: p }: { project: Project }) {
                 </Row>
               )}
               {p.facts?.map((f) => (
-                <Row key={f.label} label={f.label}>
+                <Row key={f.label} label={f.label} title={f.source}>
                   {f.value}
                 </Row>
               ))}

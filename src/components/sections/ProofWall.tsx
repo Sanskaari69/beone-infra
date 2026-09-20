@@ -1,4 +1,4 @@
-import { clientLogos, proofItems, pullQuote } from "@/data/beone";
+import { proofItems } from "@/data/beone";
 import { SectionHeading } from "@/components/primitives/SectionHeading";
 import { Reveal } from "@/components/primitives/Reveal";
 import { Val } from "@/components/primitives/Val";
@@ -66,30 +66,6 @@ export function ProofWall() {
             ))}
           </ul>
         </Reveal>
-
-        <div className="mt-16 grid gap-12 md:grid-cols-2">
-          <div>
-            <h3 className="num text-xs uppercase tracking-[0.14em] text-muted-foreground">Clients</h3>
-            {/* Client logos appear once: static, monochrome, low contrast. */}
-            <ul className="mt-4 flex flex-wrap items-center gap-6">
-              {clientLogos.map((logo, i) => (
-                <li key={i} className={logo.status === "PLACEHOLDER" ? "text-sm" : "text-sm opacity-60 grayscale"}>
-                  <Val datum={logo} />
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <figure>
-            {/* Serif only for real client quotes; the placeholder stays sans so the serif file is not fetched. */}
-            <blockquote className={pullQuote.quote.status === "PLACEHOLDER" ? "text-xl leading-relaxed" : "font-serif text-xl leading-relaxed"}>
-              <Val datum={pullQuote.quote} />
-            </blockquote>
-            <figcaption className="num mt-4 text-sm text-muted-foreground">
-              <Val datum={pullQuote.name} />, <Val datum={pullQuote.title} />, <Val datum={pullQuote.company} />
-            </figcaption>
-          </figure>
-        </div>
       </div>
     </section>
   );

@@ -52,6 +52,37 @@ describe("content integrity", () => {
   });
 });
 
+describe("client details are not published", () => {
+  it("projects carry buyers, never a client", () => {
+    for (const p of projects) {
+      expect(p).not.toHaveProperty("client");
+      expect(p.buyers.status).not.toBe("PLACEHOLDER");
+    }
+  });
+
+  it("no client logo or client quote exists in the content", async () => {
+    const mod = await import("./beone");
+    expect(mod).not.toHaveProperty("clientLogos");
+    expect(mod).not.toHaveProperty("pullQuote");
+  });
+});
+
+describe("images", () => {
+  it("every project image has real alt text and its files exist", async () => {
+    const { existsSync } = await import("node:fs");
+    const { resolve } = await import("node:path");
+    for (const p of projects.filter((x) => x.image)) {
+      expect(p.image!.alt.length).toBeGreaterThan(30);
+      expect(existsSync(resolve(__dirname, "../../public/projects", `${p.id}-${p.image!.width}.webp`)) ||
+        existsSync(resolve(__dirname, "../../public/projects", `${p.id}-480.webp`))).toBe(true);
+    }
+  });
+
+  it("all twelve projects have an image", () => {
+    expect(projects.filter((p) => p.image)).toHaveLength(12);
+  });
+});
+
 describe("figures match the project list", () => {
   it("projects handed over equals the completed projects", () => {
     const f = figures.find((x) => x.id === "handedOver")!;

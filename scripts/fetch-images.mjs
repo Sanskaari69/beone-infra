@@ -12,8 +12,13 @@ import sharp from "sharp";
 
 const BASE = "https://www.beoneinfra.com/assets/img/project/";
 const WIDTHS = [480, 960, 1600];
-// The old-site Signature Park file has blue letterbox bands baked into its left and right edges.
-const CROPS = { "signature-park": { left: 223, top: 0, width: 1173, height: 900 } };
+// These old-site files have coloured letterbox bands baked into their left and right edges.
+const CROPS = {
+  "signature-park": { left: 223, top: 0, width: 1173, height: 900 },
+  "18-jewels": { left: 215, top: 0, width: 655, height: 600 },
+  sunanda: { left: 195, top: 0, width: 690, height: 600 },
+  "signature-corner": { left: 166, top: 0, width: 752, height: 600 },
+};
 const root = path.resolve(import.meta.dirname, "..");
 const sources = JSON.parse(await readFile(path.join(root, "src/data/image-sources.json"), "utf8"));
 const outDir = path.join(root, "public/projects");
